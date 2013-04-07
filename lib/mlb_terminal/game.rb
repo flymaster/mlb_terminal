@@ -1,6 +1,7 @@
 require 'date'
 require 'nokogiri'
 require 'open-uri'
+require 'terminal-notifier'
 require 'active_support/core_ext/integer/inflections'
 
 module MLBTerminal
@@ -46,6 +47,7 @@ module MLBTerminal
           
           doc.xpath("//game/inning[*/atbat/@num > #{last_atbat}]").each do |inning|
             inning.xpath("*/atbat[@num > #{last_atbat}]").each do |at_bat|
+              TerminalNotifier.notify(at_bat["des"].strip, :title => at_bat.xpath("..").first.name.camelcase + " " + inning["num"], :subtitle => at_bat["o"] + ' out(s)')
               y.yield({
                 :inning => inning["num"],
                 :inning_loc => at_bat.xpath("..").first.name.camelcase,
